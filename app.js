@@ -75,6 +75,7 @@ function renderDashboard(){
     const w=WK[e.wid]; if(!w) return '';
     return `<div class="plan-item"><span class="dot" style="background:${typeColor(w.type)}"></span>
       <div class="meta"><b>${w.title}</b><span class="muted small">${w.type} · ${w.focus.join(', ')}</span></div>
+      ${w.yt?`<button class="btn sm" onclick="openPlayer('${e.wid}',0)">▶</button>`:''}
       ${e.done?'<span class="badge" style="background:#4ade8022;color:#4ade80">✓ Fait</span>'
         :`<button class="btn sm primary" onclick="openLog('${e.wid}','${tISO}','${e.eid}')">Faire</button>`}</div>`;
   }).join('') : `<div class="today-empty">Rien de prévu aujourd'hui. <a class="link" href="#planner">Planifier une séance →</a></div>`;
@@ -168,12 +169,29 @@ function drawLibList(){
   if(!list.length){ el.innerHTML=`<p class="muted">Aucune séance ne correspond.</p>`; return; }
   el.innerHTML = list.map(wcard).join('');
 }
+/* flattened exercise list (with day labels) for a workout */
+function flatEx(w){
+  const out=[];
+  w.days.forEach(d=>d.exercises.forEach(e=>out.push({
+    ...e, dayLabel: w.days.length>1?`Jour ${d.day}`:'' })));
+  return out;
+}
 function wcard(w){
   const col = typeColor(w.type);
+  const flat = flatEx(w);
+  let gi=-1;
   const exHTML = w.days.map(d=>{
     const label = w.days.length>1 ? `<div class="day-label">Jour ${d.day}</div>`:'';
-    return label + d.exercises.map(e=>`<div class="ex-row"><span>${e.name}</span><span class="sets">${e.sets||''}</span></div>`).join('');
+    return label + d.exercises.map(e=>{ gi++;
+      const hasVid = w.yt && e.s!=null;
+      return `<div class="ex-row ${hasVid?'playable':''}" ${hasVid?`onclick="openPlayer('${w.id}',${gi})"`:''}>
+        <span class="exn">${hasVid?'<span class="play">▶</span>':''}${e.name}</span>
+        <span class="sets">${e.sets||''}</span></div>`;
+    }).join('');
   }).join('');
+  const vidBtn = w.yt
+    ? `<button class="btn sm primary" onclick="openPlayer('${w.id}',0)">▶ Séance guidée</button>`
+    : `<button class="btn sm" disabled title="Vidéo locale (Beachbody, non hébergée)">⛔ Vidéo locale</button>`;
   return `<div class="wcard">
     <div class="wcard-top">
       <h3>${w.title}</h3>
@@ -182,14 +200,54 @@ function wcard(w){
     <div class="tags"><span class="tag type" style="color:${col};background:${col}22">${w.type}</span>
       ${w.focus.map(x=>`<span class="tag">${x}</span>`).join('')}</div>
     <div class="rest">${w.nExercises} exercices${w.days.length>1?` · ${w.days.length} jours`:''}${w.rest?` · ${w.rest}`:''}</div>
-    <button class="expand" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'▲ Masquer les exercices':'▼ Voir les ${w.nExercises} exercices'">▼ Voir les ${w.nExercises} exercices</button>
+    <button class="expand" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'▲ Masquer les exercices':'▼ Voir les ${w.nExercises} exercices'">▼ Voir les ${w.nExercises} exercices${w.yt?' (cliquez pour la vidéo)':''}</button>
     <div class="ex-list">${exHTML}</div>
     <div class="wcard-actions">
-      <button class="btn sm primary" onclick="planPrompt('${w.id}')">📅 Planifier</button>
-      <button class="btn sm" onclick="openLog('${w.id}', iso(today()))">✓ Enregistrer</button>
+      ${vidBtn}
+      <button class="btn sm" onclick="planPrompt('${w.id}')">📅 Planifier</button>
+      <button class="btn sm" onclick="openLog('${w.id}', iso(today()))">✓ Fait</button>
     </div>
   </div>`;
 }
+
+/* ===================== VIDEO PLAYER (guided session) ===================== */
+function openPlayer(wid, index){
+  const w=WK[wid]; if(!w) return;
+  const flat=flatEx(w);
+  index=Math.max(0,Math.min(index,flat.length-1));
+  renderPlayer(wid, index);
+}
+function renderPlayer(wid, index){
+  const w=WK[wid]; const flat=flatEx(w); const e=flat[index];
+  const hasVid = w.yt && e.s!=null;
+  const total=flat.length;
+  const src = hasVid
+    ? `https://www.youtube-nocookie.com/embed/${w.yt}?start=${e.s}&end=${e.e}&autoplay=1&rel=0&modestbranding=1&playsinline=1`
+    : '';
+  const media = hasVid
+    ? `<div class="video-wrap"><iframe src="${src}" title="${e.name}" frameborder="0"
+         allow="accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>`
+    : `<div class="video-wrap novideo"><div><div style="font-size:2rem">🎬</div>
+         Vidéo locale (programme Beachbody, non hébergée en ligne).<br>
+         <span class="muted small">Repère : ${e.s!=null?fmtClock(e.s)+' → '+fmtClock(e.e):'—'} dans « ${w.subtitle||w.title} »</span></div></div>`;
+  modal(`
+    <div class="player-head">
+      <div><div class="muted small">${w.title}${e.dayLabel?' · '+e.dayLabel:''} · ${index+1}/${total}</div>
+        <h3>${e.name}</h3></div>
+      <button class="icon-btn" onclick="closeModal()" aria-label="Fermer">✕</button>
+    </div>
+    ${media}
+    <div class="player-meta">
+      <span class="pill">${e.sets||''}</span>
+      ${w.yt?`<a class="link" target="_blank" rel="noopener" href="https://youtu.be/${w.yt}?t=${e.s||0}">Ouvrir sur YouTube ↗</a>`:''}
+    </div>
+    <div class="player-nav">
+      <button class="btn" ${index<=0?'disabled':''} onclick="renderPlayer('${wid}',${index-1})">‹ Précédent</button>
+      <div class="player-dots">${flat.map((_,i)=>`<span class="pdot ${i===index?'on':''}" onclick="renderPlayer('${wid}',${i})"></span>`).join('')}</div>
+      <button class="btn primary" ${index>=total-1?'disabled':''} onclick="renderPlayer('${wid}',${index+1})">Suivant ›</button>
+    </div>`, true);
+}
+function fmtClock(s){ s=Math.round(s); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
 
 /* ===================== PLANNER ===================== */
 let weekOffset = 0;
@@ -262,10 +320,11 @@ function planPrompt(wid){
 function planChipMenu(dateISO,eid){
   const arr=state.plan[dateISO]||[]; const e=arr.find(x=>x.eid===eid); if(!e) return;
   const w=WK[e.wid];
-  modal(`<h3>${w.title}</h3><p class="muted small">${fmtDate(dateISO)} · ${w.type}</p>
+  modal(`<h3>${w.title}</h3><p class="muted small">${fmtDate(dateISO)} · ${w.type} · ${w.focus.join(', ')}</p>
     <div class="modal-actions" style="justify-content:flex-start;flex-wrap:wrap;margin-top:16px">
+      ${w.yt?`<button class="btn primary" onclick="openPlayer('${e.wid}',0)">▶ Regarder</button>`:''}
       ${e.done?'<span class="muted">Séance déjà complétée ✓</span>'
-        :`<button class="btn primary" onclick="openLog('${e.wid}','${dateISO}','${eid}')">✓ Marquer comme fait</button>`}
+        :`<button class="btn" onclick="openLog('${e.wid}','${dateISO}','${eid}')">✓ Marquer comme fait</button>`}
       <button class="btn" onclick="removePlan('${dateISO}','${eid}')">Retirer</button>
       <button class="btn ghost" onclick="closeModal()">Annuler</button>
     </div>`);
@@ -500,7 +559,8 @@ function roundRect(c,x,y,w,h,r){ r=Math.min(r,w/2,h/2); c.beginPath();
   c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath(); }
 
 /* ===================== modal / toast ===================== */
-function modal(html){ const m=document.getElementById('modal'); m.innerHTML=html;
+function modal(html, wide){ const m=document.getElementById('modal'); m.innerHTML=html;
+  m.classList.toggle('wide', !!wide);
   document.getElementById('modalBackdrop').classList.remove('hidden'); }
 function closeModal(){ document.getElementById('modalBackdrop').classList.add('hidden'); }
 document.getElementById('modalBackdrop').onclick=e=>{ if(e.target.id==='modalBackdrop') closeModal(); };

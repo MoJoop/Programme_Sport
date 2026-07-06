@@ -200,7 +200,30 @@ canvas{width:100%!important;display:block}
 .modal{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
   width:min(560px,100%);max-height:88vh;overflow:auto;box-shadow:0 24px 60px rgba(0,0,0,.5);padding:22px}
 .modal h3{margin-bottom:14px}
+.modal.wide{width:min(860px,100%);padding:16px}
 .modal-close{position:absolute}
+
+/* video player */
+.player-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+.player-head h3{margin:2px 0 0;font-size:1.15rem}
+.player-head .icon-btn{width:34px;height:34px;flex-shrink:0}
+.video-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}
+.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.video-wrap.novideo{display:grid;place-items:center;text-align:center;color:var(--muted);
+  background:var(--surface-2);border:1px dashed var(--line);padding:20px;line-height:1.7}
+.player-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 2px}
+.pill{padding:5px 12px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent);
+  color:var(--accent);font-weight:700;font-size:.85rem}
+.player-nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.player-dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;flex:1;max-height:44px;overflow:auto}
+.pdot{width:9px;height:9px;border-radius:50%;background:var(--line);cursor:pointer;transition:.15s}
+.pdot:hover{background:var(--muted)}
+.pdot.on{background:var(--accent);transform:scale(1.25)}
+/* playable exercise rows */
+.ex-row.playable{cursor:pointer;border-radius:8px;margin:0 -6px;padding-left:6px;padding-right:6px;transition:.12s}
+.ex-row.playable:hover{background:var(--surface-2)}
+.ex-row .exn{display:flex;align-items:center;gap:8px}
+.ex-row .play{color:var(--accent);font-size:.72rem}
 .field{margin-bottom:13px}
 .field label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:5px}
 .field input,.field select,.field textarea{width:100%;padding:10px 12px;border-radius:10px;
