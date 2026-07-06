@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0e1116">
+<title>Programme Sport — Plateforme d'entraînement</title>
+<meta name="description" content="Planifiez vos séances, suivez votre progression et travaillez chaque partie du corps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E">
+</head>
+<body data-theme="dark">
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">💪</span>
+    <div>
+      <h1>Programme Sport</h1>
+      <p class="tagline">Planifie · Entraîne · Progresse</p>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <a href="#dashboard" data-view="dashboard" class="tab active">Tableau de bord</a>
+    <a href="#library" data-view="library" class="tab">Bibliothèque</a>
+    <a href="#planner" data-view="planner" class="tab">Planificateur</a>
+    <a href="#journal" data-view="journal" class="tab">Journal</a>
+    <a href="#progress" data-view="progress" class="tab">Progression</a>
+  </nav>
+  <div class="topbar-actions">
+    <button id="themeToggle" class="icon-btn" title="Thème clair/sombre" aria-label="Changer de thème">🌙</button>
+    <button id="menuToggle" class="icon-btn only-mobile" aria-label="Menu">☰</button>
+  </div>
+</header>
+
+<main id="app">
+  <!-- ============ DASHBOARD ============ -->
+  <section class="view" id="view-dashboard">
+    <div class="hero">
+      <div>
+        <h2 class="hero-title">Bonjour 👋</h2>
+        <p class="hero-sub" id="heroSub">Prêt pour la séance du jour&nbsp;?</p>
+      </div>
+      <div class="hero-stats" id="heroStats"></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head"><h3>Au programme aujourd'hui</h3><a href="#planner" class="link">Planifier →</a></div>
+        <div id="todayPlan" class="today-plan"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Cette semaine</h3><a href="#planner" class="link">Voir la semaine →</a></div>
+        <div id="weekBalance"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Activité (16 dernières semaines)</h3></div>
+      <div id="dashHeatmap" class="heatmap-wrap"></div>
+    </div>
+  </section>
+
+  <!-- ============ LIBRARY ============ -->
+  <section class="view hidden" id="view-library">
+    <div class="view-head">
+      <h2>Bibliothèque d'exercices</h2>
+      <p class="muted"><span id="libCount"></span> séances · 410 exercices issus de vos vidéos</p>
+    </div>
+    <div class="filters">
+      <input type="search" id="libSearch" placeholder="Rechercher un exercice ou une séance…" autocomplete="off">
+      <div class="chips" id="libFilters"></div>
+    </div>
+    <div id="libList" class="workout-grid"></div>
+  </section>
+
+  <!-- ============ PLANNER ============ -->
+  <section class="view hidden" id="view-planner">
+    <div class="view-head planner-head">
+      <h2>Planificateur</h2>
+      <div class="week-nav">
+        <button class="btn ghost" id="weekPrev">‹</button>
+        <button class="btn ghost" id="weekToday">Aujourd'hui</button>
+        <span id="weekLabel" class="week-label"></span>
+        <button class="btn ghost" id="weekNext">›</button>
+      </div>
+    </div>
+    <div id="plannerGrid" class="planner-grid"></div>
+    <div class="card">
+      <div class="card-head"><h3>Équilibre de la semaine</h3><span class="muted small">Couverture des groupes musculaires</span></div>
+      <div id="plannerBalance"></div>
+    </div>
+    <div class="card tip">
+      <h3>💡 Modèles de programme</h3>
+      <p class="muted small">Applique un schéma équilibré sur la semaine en cours.</p>
+      <div class="template-btns" id="templateBtns"></div>
+    </div>
+  </section>
+
+  <!-- ============ JOURNAL ============ -->
+  <section class="view hidden" id="view-journal">
+    <div class="view-head">
+      <h2>Journal d'entraînement</h2>
+      <button class="btn primary" id="addLogBtn">+ Enregistrer une séance</button>
+    </div>
+    <div id="journalList" class="journal-list"></div>
+  </section>
+
+  <!-- ============ PROGRESS ============ -->
+  <section class="view hidden" id="view-progress">
+    <div class="view-head">
+      <h2>Progression</h2>
+      <p class="muted">Ton évolution au fil du temps</p>
+    </div>
+    <div id="progressStats" class="progress-stats"></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-head"><h3>Séances par semaine</h3></div><canvas id="chartWeekly" height="220"></canvas></div>
+      <div class="card"><div class="card-head"><h3>Répartition par type</h3></div><canvas id="chartType" height="220"></canvas></div>
+    </div>
+    <div class="card"><div class="card-head"><h3>Groupes musculaires travaillés</h3></div><div id="chartFocus"></div></div>
+    <div class="card">
+      <div class="card-head"><h3>Progression par exercice</h3>
+        <select id="exerciseSelect" class="select"></select>
+      </div>
+      <canvas id="chartExercise" height="240"></canvas>
+      <p class="muted small" id="exerciseHint">Enregistre des séries (charge / répétitions) dans le journal pour voir la courbe.</p>
+    </div>
+  </section>
+</main>
+
+<!-- ===== Modal ===== -->
+<div class="modal-backdrop hidden" id="modalBackdrop">
+  <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+</div>
+
+<footer class="footer">
+  <span>Données stockées localement dans ton navigateur.</span>
+  <span class="footer-actions">
+    <button class="link" id="exportBtn">Exporter</button>·
+    <button class="link" id="importBtn">Importer</button>·
+    <button class="link danger" id="resetBtn">Réinitialiser</button>
+  </span>
+</footer>
+<input type="file" id="importFile" accept="application/json" hidden>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
