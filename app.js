@@ -75,7 +75,7 @@ function renderDashboard(){
     const w=WK[e.wid]; if(!w) return '';
     return `<div class="plan-item"><span class="dot" style="background:${typeColor(w.type)}"></span>
       <div class="meta"><b>${w.title}</b><span class="muted small">${w.type} · ${w.focus.join(', ')}</span></div>
-      ${w.yt?`<button class="btn sm" onclick="openPlayer('${e.wid}',0)">▶</button>`:''}
+      <button class="btn sm" onclick="openPlayer('${e.wid}',0)">▶</button>
       ${e.done?'<span class="badge" style="background:#4ade8022;color:#4ade80">✓ Fait</span>'
         :`<button class="btn sm primary" onclick="openLog('${e.wid}','${tISO}','${e.eid}')">Faire</button>`}</div>`;
   }).join('') : `<div class="today-empty">Rien de prévu aujourd'hui. <a class="link" href="#planner">Planifier une séance →</a></div>`;
@@ -183,15 +183,13 @@ function wcard(w){
   const exHTML = w.days.map(d=>{
     const label = w.days.length>1 ? `<div class="day-label">Jour ${d.day}</div>`:'';
     return label + d.exercises.map(e=>{ gi++;
-      const hasVid = w.yt && e.s!=null;
+      const hasVid = !!e.clip;
       return `<div class="ex-row ${hasVid?'playable':''}" ${hasVid?`onclick="openPlayer('${w.id}',${gi})"`:''}>
         <span class="exn">${hasVid?'<span class="play">▶</span>':''}${e.name}</span>
         <span class="sets">${e.sets||''}</span></div>`;
     }).join('');
   }).join('');
-  const vidBtn = w.yt
-    ? `<button class="btn sm primary" onclick="openPlayer('${w.id}',0)">▶ Séance guidée</button>`
-    : `<button class="btn sm" disabled title="Vidéo locale (Beachbody, non hébergée)">⛔ Vidéo locale</button>`;
+  const vidBtn = `<button class="btn sm primary" onclick="openPlayer('${w.id}',0)">▶ Séance guidée</button>`;
   return `<div class="wcard">
     <div class="wcard-top">
       <h3>${w.title}</h3>
@@ -219,17 +217,13 @@ function openPlayer(wid, index){
 }
 function renderPlayer(wid, index){
   const w=WK[wid]; const flat=flatEx(w); const e=flat[index];
-  const hasVid = w.yt && e.s!=null;
   const total=flat.length;
-  const src = hasVid
-    ? `https://www.youtube-nocookie.com/embed/${w.yt}?start=${e.s}&end=${e.e}&autoplay=1&rel=0&modestbranding=1&playsinline=1`
-    : '';
-  const media = hasVid
-    ? `<div class="video-wrap"><iframe src="${src}" title="${e.name}" frameborder="0"
-         allow="accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>`
+  const media = e.clip
+    ? `<div class="video-wrap"><video src="${e.clip}" autoplay loop muted playsinline controls
+         preload="metadata" title="${e.name}"></video>
+         <span class="loop-tag">⟳ en boucle · muet</span></div>`
     : `<div class="video-wrap novideo"><div><div style="font-size:2rem">🎬</div>
-         Vidéo locale (programme Beachbody, non hébergée en ligne).<br>
-         <span class="muted small">Repère : ${e.s!=null?fmtClock(e.s)+' → '+fmtClock(e.e):'—'} dans « ${w.subtitle||w.title} »</span></div></div>`;
+         Clip indisponible pour cet exercice.</div></div>`;
   modal(`
     <div class="player-head">
       <div><div class="muted small">${w.title}${e.dayLabel?' · '+e.dayLabel:''} · ${index+1}/${total}</div>
@@ -239,7 +233,7 @@ function renderPlayer(wid, index){
     ${media}
     <div class="player-meta">
       <span class="pill">${e.sets||''}</span>
-      ${w.yt?`<a class="link" target="_blank" rel="noopener" href="https://youtu.be/${w.yt}?t=${e.s||0}">Ouvrir sur YouTube ↗</a>`:''}
+      ${w.yt&&e.s!=null?`<a class="link" target="_blank" rel="noopener" href="https://youtu.be/${w.yt}?t=${e.s}">Voir en entier sur YouTube ↗</a>`:''}
     </div>
     <div class="player-nav">
       <button class="btn" ${index<=0?'disabled':''} onclick="renderPlayer('${wid}',${index-1})">‹ Précédent</button>
@@ -322,7 +316,7 @@ function planChipMenu(dateISO,eid){
   const w=WK[e.wid];
   modal(`<h3>${w.title}</h3><p class="muted small">${fmtDate(dateISO)} · ${w.type} · ${w.focus.join(', ')}</p>
     <div class="modal-actions" style="justify-content:flex-start;flex-wrap:wrap;margin-top:16px">
-      ${w.yt?`<button class="btn primary" onclick="openPlayer('${e.wid}',0)">▶ Regarder</button>`:''}
+      <button class="btn primary" onclick="openPlayer('${e.wid}',0)">▶ Regarder</button>
       ${e.done?'<span class="muted">Séance déjà complétée ✓</span>'
         :`<button class="btn" onclick="openLog('${e.wid}','${dateISO}','${eid}')">✓ Marquer comme fait</button>`}
       <button class="btn" onclick="removePlan('${dateISO}','${eid}')">Retirer</button>
