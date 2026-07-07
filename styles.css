@@ -110,6 +110,7 @@ button{font-family:inherit;cursor:pointer}
   padding:3px 8px;border-radius:6px;white-space:nowrap}
 .badge.fam-dig{background:#7c3aed22;color:#a78bfa}
 .badge.fam-tri{background:#22d3ee1f;color:#22d3ee}
+.badge.fam-per{background:#f472b61f;color:#f472b6}
 .wcard .tags{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px}
 .tag{font-size:.72rem;padding:3px 9px;border-radius:999px;background:var(--chip);color:var(--muted)}
 .tag.type{background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent)}

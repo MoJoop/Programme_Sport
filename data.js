@@ -3669,5 +3669,180 @@ window.WORKOUTS = [
    }
   ],
   "nExercises": 20
+ },
+ {
+  "id": "perinee_kine3",
+  "family": "Périnée",
+  "type": "Périnée",
+  "focus": [
+   "Périnée",
+   "Plancher pelvien"
+  ],
+  "title": "3 exercices pour renforcer le périnée",
+  "subtitle": "Vitaliplay · kiné du sport",
+  "rest": "Suivre la vidéo · exercices quotidiens conseillés",
+  "yt": "FyETKifpMKw",
+  "days": [
+   {
+    "day": 1,
+    "exercises": [
+     {
+      "name": "Séance guidée (vidéo)",
+      "sets": "Débutant · renforcement"
+     }
+    ]
+   }
+  ],
+  "nExercises": 1
+ },
+ {
+  "id": "perinee_kegel_julie",
+  "family": "Périnée",
+  "type": "Périnée",
+  "focus": [
+   "Périnée",
+   "Plancher pelvien"
+  ],
+  "title": "Exercices de Kegel avec une kiné spécialisée",
+  "subtitle": "Julie · FAP Académie",
+  "rest": "Suivre la vidéo · exercices quotidiens conseillés",
+  "yt": "tK1FJIORdoM",
+  "days": [
+   {
+    "day": 1,
+    "exercises": [
+     {
+      "name": "Séance guidée (vidéo)",
+      "sets": "Kegel · rééducation"
+     }
+    ]
+   }
+  ],
+  "nExercises": 1
+ },
+ {
+  "id": "perinee_kegel_ottawa",
+  "family": "Périnée",
+  "type": "Périnée",
+  "focus": [
+   "Périnée",
+   "Plancher pelvien"
+  ],
+  "title": "Kegel : renforcez votre plancher pelvien facilement",
+  "subtitle": "Santé publique Ottawa",
+  "rest": "Suivre la vidéo · exercices quotidiens conseillés",
+  "yt": "O5vRDWxd00E",
+  "days": [
+   {
+    "day": 1,
+    "exercises": [
+     {
+      "name": "Séance guidée (vidéo)",
+      "sets": "Kegel · guidé"
+     }
+    ]
+   }
+  ],
+  "nExercises": 1
+ },
+ {
+  "id": "perinee_routine_chum",
+  "family": "Périnée",
+  "type": "Périnée",
+  "focus": [
+   "Périnée",
+   "Plancher pelvien"
+  ],
+  "title": "Exercices du plancher pelvien (routine)",
+  "subtitle": "CHU de Montréal",
+  "rest": "Suivre la vidéo · exercices quotidiens conseillés",
+  "yt": "P0arcVEfDh0",
+  "days": [
+   {
+    "day": 1,
+    "exercises": [
+     {
+      "name": "Séance guidée (vidéo)",
+      "sets": "Routine complète"
+     }
+    ]
+   }
+  ],
+  "nExercises": 1
+ },
+ {
+  "id": "perinee_hommes",
+  "family": "Périnée",
+  "type": "Périnée",
+  "focus": [
+   "Périnée",
+   "Plancher pelvien"
+  ],
+  "title": "Périnée hommes — anatomie et exercices",
+  "subtitle": "CSS",
+  "rest": "Suivre la vidéo · exercices quotidiens conseillés",
+  "yt": "c3DpPStj1r0",
+  "days": [
+   {
+    "day": 1,
+    "exercises": [
+     {
+      "name": "Séance guidée (vidéo)",
+      "sets": "Hommes · anatomie"
+     }
+    ]
+   }
+  ],
+  "nExercises": 1
+ },
+ {
+  "id": "perinee_erreur",
+  "family": "Périnée",
+  "type": "Périnée",
+  "focus": [
+   "Périnée",
+   "Plancher pelvien"
+  ],
+  "title": "Plancher pelvien : l'erreur à éviter",
+  "subtitle": "Denis Fortier",
+  "rest": "Suivre la vidéo · exercices quotidiens conseillés",
+  "yt": "I1sHavieBlo",
+  "days": [
+   {
+    "day": 1,
+    "exercises": [
+     {
+      "name": "Séance guidée (vidéo)",
+      "sets": "Pédagogique"
+     }
+    ]
+   }
+  ],
+  "nExercises": 1
+ },
+ {
+  "id": "perinee_realtime_en",
+  "family": "Périnée",
+  "type": "Périnée",
+  "focus": [
+   "Périnée",
+   "Plancher pelvien"
+  ],
+  "title": "Pelvic Floor — entraînement guidé en temps réel",
+  "subtitle": "Michelle Kenway (EN)",
+  "rest": "Suivre la vidéo · exercices quotidiens conseillés",
+  "yt": "-1lViRMMdJg",
+  "days": [
+   {
+    "day": 1,
+    "exercises": [
+     {
+      "name": "Séance guidée (vidéo)",
+      "sets": "Follow-along · temps réel"
+     }
+    ]
+   }
+  ],
+  "nExercises": 1
  }
 ];

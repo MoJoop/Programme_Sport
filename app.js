@@ -6,10 +6,10 @@ const STORE = 'ps_v1';
 
 const TYPE_COLORS = {
   'Force':'#4ade80','Pliométrie':'#a78bfa','Vitesse':'#22d3ee','Agilité':'#fbbf24',
-  'Mobilité':'#38bdf8','Récupération':'#94a3b8','Autre':'#64748b'
+  'Mobilité':'#38bdf8','Récupération':'#94a3b8','Périnée':'#f472b6','Autre':'#64748b'
 };
 const typeColor = t => TYPE_COLORS[t] || '#64748b';
-const famClass = f => f === 'Dig Deeper' ? 'fam-dig' : 'fam-tri';
+const famClass = f => f === 'Dig Deeper' ? 'fam-dig' : f === 'Périnée' ? 'fam-per' : 'fam-tri';
 
 const ALL_FOCUS = ['Corps entier','Haut du corps','Jambes','Fessiers','Pecs','Dos','Bras',
   'Explosivité','Vitesse','Agilité','Mobilité','Récupération'];
@@ -183,7 +183,7 @@ function wcard(w){
   const exHTML = w.days.map(d=>{
     const label = w.days.length>1 ? `<div class="day-label">Jour ${d.day}</div>`:'';
     return label + d.exercises.map(e=>{ gi++;
-      const hasVid = !!e.clip;
+      const hasVid = !!e.clip || !!w.yt;
       return `<div class="ex-row ${hasVid?'playable':''}" ${hasVid?`onclick="openPlayer('${w.id}',${gi})"`:''}>
         <span class="exn">${hasVid?'<span class="play">▶</span>':''}${e.name}</span>
         <span class="sets">${e.sets||''}</span></div>`;
@@ -218,12 +218,21 @@ function openPlayer(wid, index){
 function renderPlayer(wid, index){
   const w=WK[wid]; const flat=flatEx(w); const e=flat[index];
   const total=flat.length;
-  const media = e.clip
-    ? `<div class="video-wrap"><video src="${e.clip}" autoplay loop muted playsinline controls
+  let media;
+  if(e.clip){
+    media = `<div class="video-wrap"><video src="${e.clip}" autoplay loop muted playsinline controls
          preload="metadata" title="${e.name}"></video>
-         <span class="loop-tag">⟳ en boucle · muet</span></div>`
-    : `<div class="video-wrap novideo"><div><div style="font-size:2rem">🎬</div>
+         <span class="loop-tag">⟳ en boucle · muet</span></div>`;
+  } else if(w.yt){
+    const seg = e.s!=null;
+    const src = `https://www.youtube-nocookie.com/embed/${w.yt}?rel=0&modestbranding=1&playsinline=1`
+      + (seg?`&start=${e.s}&end=${e.e}&autoplay=1`:'');
+    media = `<div class="video-wrap"><iframe src="${src}" title="${e.name}" frameborder="0"
+         allow="accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>`;
+  } else {
+    media = `<div class="video-wrap novideo"><div><div style="font-size:2rem">🎬</div>
          Clip indisponible pour cet exercice.</div></div>`;
+  }
   modal(`
     <div class="player-head">
       <div><div class="muted small">${w.title}${e.dayLabel?' · '+e.dayLabel:''} · ${index+1}/${total}</div>
